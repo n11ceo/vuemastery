@@ -3,7 +3,7 @@
     <div class="event-header">
       <span class="eyebrow">@{{ event.time }} on {{ event.date }}</span>
       <h1 class="title">{{ event.title }}</h1>
-      <h5>Organized by {{ event.organizer }}</h5>
+      <h5>Organized by {{ event.organiser ? event.organizer.name : '' }}</h5>
       <h5>Category: {{ event.category }}</h5>
     </div>
     <BaseIcon name="map">
@@ -14,9 +14,9 @@
     <p>{{ event.description }}</p>
     <h2>
       Attendees
-      <span class="badge -fill-gradient">{{
-        event.attendees ? event.attendees.length : 0
-      }}</span>
+      <span class="badge -fill-gradient">
+        {{ event.attendees ? event.attendees.length : 0 }}
+      </span>
     </h2>
     <ul class="list-group">
       <li
@@ -31,24 +31,20 @@
 </template>
 
 <script>
-import EventService from '@/services/EventService.js'
+import { mapState, mapActions } from 'vuex'
 
 export default {
   props: ['id'],
   data() {
-    return {
-      event: {}
-    }
+    return {}
   },
   created() {
-    EventService.getEvent(this.id)
-      .then(response => {
-        this.event = response.data
-      })
-      .catch(error => {
-        console.log('Error:', error.response)
-      })
-  }
+    this.fetchEvent(this.id)
+  },
+  computed: mapState({
+    event: state => state.event.event
+  }),
+  methods: mapActions('event', ['fetchEvent'])
 }
 </script>
 
